@@ -3,11 +3,12 @@
 
 #include "usq_global.h"
 
+/*
 class USQSHARED_EXPORT USQ
 {
 
 public:
     USQ();
 };
-
+*/
 #endif // USQ_H

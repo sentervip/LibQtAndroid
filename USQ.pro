@@ -3,7 +3,7 @@
 # Project created by QtCreator 2018-12-29T13:48:37
 #
 #-------------------------------------------------
-
+QT       += core gui androidextras
 TARGET = USQ
 TEMPLATE = lib
 
@@ -26,6 +26,11 @@ HEADERS += usq.h\
         usq_global.h
 
 unix {
+    DEFINES += OS_LINUX
     target.path = /usr/lib
-    INSTALLS += target
+  INSTALLS += target
+    QMAKE_CXXFLAGS += -Wno-unused-parameter -fpermissive -std=c++11
+}
+win32 {
+    DEFINES += OS_WIN32
 }
