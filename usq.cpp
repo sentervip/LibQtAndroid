@@ -2,17 +2,14 @@
 #include <assert.h>
 #include <QAndroidJniEnvironment>
 #include <QAndroidJniObject>
-#include <jni.h>
 #include <QDebug>
 #include <QFile>
 #include <QDir>
-#include <android/log.h>
+#include <unistd.h>
 
-#define LOG(...)     __android_log_print(ANDROID_LOG_INFO,"MAVT",__VA_ARGS__)
-#define LOGE(...)    __android_log_print(ANDROID_LOG_ERROR,"MAVT",__VA_ARGS__)
-#define LOGL()   LOGE("L=%d",__LINE__);
-QObject *g_listener = 0;
+//QObject *g_listener = 0;
 static JavaVM* g_jvm;
+
 
 #ifdef __cplusplus
 extern "C"{
@@ -21,7 +18,7 @@ extern "C"{
 #endif
 
  //jstring   Java_com_example_yons_test_MainActivity_GetQtVersion(JNIEnv *env, jobject thiz)
-static jstring getQtVersion(JNIEnv *env, jobject thiz)
+static jstring GetQtVersion(JNIEnv *env, jobject thiz)
 {
     LOGE("enter jni ver");
     QString version(qVersion());
@@ -35,7 +32,7 @@ static jstring getQtVersion(JNIEnv *env, jobject thiz)
 }
 
 
-static jstring getQtVersion2(JNIEnv *env, jobject thiz, jint arg)
+static jstring GetQtVersion2(JNIEnv *env, jobject thiz, jint arg)
 {
     qDebug() <<"arg:"<<arg;
     QString version(qVersion());
@@ -74,38 +71,32 @@ static void onImageCaptured(JNIEnv *env, jobject thiz,int result, jstring imageF
 }
 */
 jclass g_extendsNative = 0;
-bool registerNativeMethods()
+
+bool registerNativeMethods(JNIEnv* env)
 {
     JNINativeMethod methods[] {
-        {"GetQtVersion","()Ljava/lang/String;", (void*)getQtVersion},
+        {"GetQtVersion","()Ljava/lang/String;", (void*)GetQtVersion},
         //{"OnLocationReady", "(IDD)V", (void*)onLocationReady},
         //{"OnImageCaptured", "(ILjava/lang/String;)V", (void*)onImageCaptured}
     };
 
-    const char *classname = "com_example_yons_test_MainActivity";
-                            //"an/qt/extendsQtWithJava/ExtendsQtNative";
+    const char *classname = JNI_CLASS_USQ;
+
     jclass clazz;
-    QAndroidJniEnvironment env;
+    //QAndroidJniEnvironment env;
 
     QAndroidJniObject javaClass(classname);
-    clazz = env->GetObjectClass(javaClass.object<jobject>());
-    //clazz = env->FindClass(classname);
-    qDebug() << "find ExtendsQtNative - " << clazz;
+    clazz = env->FindClass(classname);
+    LOGE("find clazz=%d",clazz);
     bool result = false;
     if(clazz)
     {
-        //g_extendsNative = static_cast<jclass>(env->NewGlobalRef(clazz));
         jint ret = env->RegisterNatives(clazz,
                                         methods,
                                         sizeof(methods) / sizeof(methods[0]));
         env->DeleteLocalRef(clazz);
-        qDebug() << "RegisterNatives return - " << ret;
+        LOGE("RegisterNative ret=%d",ret);
         result = ret >= 0;
-        /*
-        QAndroidJniObject::callStaticMethod<void>("an/qt/extendsQtWithJava/ExtendsQtNative",
-                                               "onImageCaptured", "(I)V",0);
-
-        */
     }
     if(env->ExceptionCheck()) env->ExceptionClear();
     return result;
@@ -118,14 +109,13 @@ JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved)
     LOGE("enter jni onLoad");
     g_jvm = vm;  LOGL();
 
-    if ( vm->GetEnv( (void**) env, JNI_VERSION_1_6) != JNI_OK) {
-        LOGL();
-        LOGE("jni ver=0x%x", vm->GetEnv( (void**) env, JNI_VERSION_1_6));
+    if ( vm->GetEnv( (void**) &env, JNI_VERSION_1_6) != JNI_OK) {
+        LOGE("exit,device jni ver=0x%x", vm->GetEnv( (void**)&env, JNI_VERSION_1_6));
         return -1;
     }
-    LOGL();
-    assert(env != NULL);  LOGL();
-    registerNativeMethods();  LOGL();
+    assert(env != NULL);
+    registerNativeMethods(env);
+    LOG("jni_onload over");
 
     return JNI_VERSION_1_6;
 }
