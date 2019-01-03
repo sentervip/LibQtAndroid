@@ -10,11 +10,13 @@ public class MainActivity extends AppCompatActivity {
     public String tag = "mavt";
     // Used to load the 'native-lib' library on application startup.
     static {
-        System.loadLibrary("native-lib");
+        //System.loadLibrary("native-lib");
         System.loadLibrary("gnustl_shared");
         System.loadLibrary("Qt5Core");
-        //System.loadLibrary("Qt5Widgets");
         System.loadLibrary("Qt5Gui");
+        System.loadLibrary("Qt5Network");
+        System.loadLibrary("Qt5OpenGL");
+        System.loadLibrary("Qt5Widgets");
         System.loadLibrary("USQ");
     }
 

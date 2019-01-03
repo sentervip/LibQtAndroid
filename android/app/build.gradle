@@ -9,10 +9,17 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+
         externalNativeBuild {
-            cmake {
-                cppFlags "-std=c++11 -fexceptions"
-            }
+            //cmake {
+            //    cppFlags "-std=c++11 -fexceptions"
+            //}
+
+        }
+        ndk {
+            abiFilters  "armeabi-v7a"
+
         }
     }
     buildTypes {
@@ -23,7 +30,7 @@ android {
     }
     externalNativeBuild {
         cmake {
-            path "CMakeLists.txt"
+           // path "CMakeLists.txt"
         }
     }
     sourceSets {
@@ -32,6 +39,7 @@ android {
             jniLibs.srcDirs = ['libs']
         }
     }
+
 }
 
 dependencies {
