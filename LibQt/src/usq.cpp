@@ -6,6 +6,7 @@
 #include <QFile>
 #include <QDir>
 #include <unistd.h>
+//#include <QLabel>
 
 //QObject *g_listener = 0;
 static JavaVM* g_jvm;
@@ -116,6 +117,7 @@ JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved)
     assert(env != NULL);
     registerNativeMethods(env);
     LOG("jni_onload over");
+    //QLabel * TestLabe = new QLabel("test");
 
     return JNI_VERSION_1_6;
 }
